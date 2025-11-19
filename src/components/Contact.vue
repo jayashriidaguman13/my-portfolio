@@ -37,12 +37,16 @@
       });
 
       const result = await response.json();
-      if(result.success) {
+      if(!name.value || !email.value || !message.value) {
+        isLoading.value = false;
+        notyf.error("Please fill in all required fields.")
+      } else if(result.success) {
         console.log(result);
 
         isLoading.value = false;
         notyf.success("Message sent")
       }
+
       } catch(error) {
         console.log();
 
@@ -129,10 +133,12 @@ onMounted(() => {
           <img class="social-icon" src="/images/github.png" alt="GitHub">
         </a>
       </div>
-      <div class="d-flex justify-content-center justify-content-md-end col-12 col-md-4">
-        <button type="submit" class="btn" :disabled="isLoading">{{isLoading ? "Sending..." : "Submit"}}</button>
-        <div class="d-flex justify-content-end mt-2">
-            <div ref="recaptchaContainer"></div>
+
+      <div class="d-flex col-12 col-md-4">
+          <button type="submit" class="btn py-3 px-5" :disabled="isLoading">{{isLoading ? "Sending..." : "Submit"}}</button>
+
+        <div>
+          <div ref="recaptchaContainer"></div>
         </div>
       </div>
     </div>
