@@ -1,5 +1,5 @@
 <script setup>
-  import {ref} from 'vue';
+  import {ref, onMounted, onBeforeUnmount} from 'vue';
   import {Notyf} from 'notyf';
   import 'notyf/notyf.min.css';
 
@@ -52,6 +52,52 @@
       resetRecaptcha();
     }
 }
+
+const SITE_KEY = '6Le7xREsAAAAAEm2itC_oTO1RiJxoHpr-rUj6LJk'
+const recaptchaContainer = ref(null);
+const recaptchaWidgetId = ref(null);
+const recaptchaToken = ref('');
+
+function onRecaptchaSuccess(token) {
+    recaptchaToken.value = token;
+}
+
+function onRecaptchaExpired() {
+    recaptchaToken.value = '';
+}
+
+function renderRecaptcha() {
+    if(!window.grecaptcha) {
+        console.error('reCAPTCHA not loaded')
+        return;
+    }
+
+    recaptchaWidgetId.value = window.grecaptcha.render(recaptchaContainer.value, {
+    sitekey: SITE_KEY,
+    size: 'normal',
+    callback: onRecaptchaSuccess,
+    'expired-callback': onRecaptchaExpired
+    })
+}
+
+function resetRecaptcha() {
+    if(recaptchaWidgetId.value !== null) {
+        window.grecaptcha.reset(recaptchaWidgetId.value);
+        recaptchaToken.value = '';
+    }
+}
+
+onMounted(() => {
+    const interval = setInterval(() => {
+        if(window.grecaptcha && window.grecaptcha.render) {
+            renderRecaptcha();
+            clearInterval(interval);
+        }
+    }, 100)
+    onBeforeUnmount(() => {
+        clearInterval(interval);
+    })
+});
 </script>
 
 <template>
