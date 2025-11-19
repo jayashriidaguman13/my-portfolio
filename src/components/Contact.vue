@@ -131,6 +131,9 @@ onMounted(() => {
       </div>
       <div class="d-flex justify-content-center justify-content-md-end col-12 col-md-4">
         <button type="submit" class="btn" :disabled="isLoading">{{isLoading ? "Sending..." : "Submit"}}</button>
+        <div class="d-flex justify-content-end mt-2">
+            <div ref="recaptchaContainer"></div>
+        </div>
       </div>
     </div>
   </form>
